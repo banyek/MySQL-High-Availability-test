@@ -1,0 +1,1 @@
+echo "show stat" | socat stdio /var/lib/haproxy/stats | cut -d, -f1,2,18
