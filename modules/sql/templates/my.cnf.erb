@@ -8,6 +8,7 @@ gtid-mode                 = on
 log-bin                   = <%= @fqdn %>
 log-slave-updates
 enforce-gtid-consistency  = true
+read-only                 = on
 
 [mysqld_safe]
 log-error=/var/log/mysqld.log

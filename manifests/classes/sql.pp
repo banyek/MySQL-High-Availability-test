@@ -46,4 +46,7 @@ class sql ($serverid = '') {
     source   => '/tmp/mha4mysql-node-0.56-0.el6.noarch.rpm',
     require  => File['/tmp/mha4mysql-node-0.56-0.el6.noarch.rpm']
     }
+  package {"MySQL-python":
+    ensure   => 'installed'
+  }
 }

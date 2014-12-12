@@ -47,10 +47,26 @@ class mhamanager {
   package { "haproxy":
     ensure => installed
   } ->
+  file { "/etc/haproxy/haproxy.cfg_master1":
+    source => "puppet:///files/haproxy/haproxy.cfg_master1"
+  } ->
+  file { "/etc/haproxy/haproxy.cfg_master2":
+    source => "puppet:///files/haproxy/haproxy.cfg_master2"
+  } 
+
   file { "/etc/haproxy/haproxy.cfg":
-    source => "puppet:///files/haproxy/haproxy.cfg"
+    ensure  => link,
+    target  => "/etc/haproxy/haproxy.cfg_master1"
   } ~>
   service { "haproxy":
     ensure => "running"
+  } ->
+  file {"/root/switch.sh":
+    source => "puppet:///files/scripts/switch.sh",
+    mode   => "0755",
+  } ->
+  file {"/root/master_ip_online_change":
+    source => "puppet:///files/scripts/master_ip_online_change",
+    mode   => "0755",
   }
 }
