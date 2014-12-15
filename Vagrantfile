@@ -5,6 +5,7 @@
 VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "master1" do |master1|
+    #  vagrant box add Centos-6.4 http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20131103.box
     master1.vm.box = "Centos-6.4"
     master1.vm.network "private_network", ip: "192.168.50.10"
     master1.vm.hostname = "master1.dev"
@@ -18,6 +19,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
 config.vm.define "master2" do |master2|
+    #  vagrant box add Centos-6.4 http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20131103.box
     master2.vm.box = "Centos-6.4"
     master2.vm.network "private_network", ip: "192.168.50.11"
     master2.vm.hostname = "master2.dev"
@@ -29,7 +31,9 @@ config.vm.define "master2" do |master2|
     end
     master2.ssh.forward_agent
   end
+  
   config.vm.define "slave" do |slave|
+    #  vagrant box add Centos-6.4 http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20131103.box
     slave.vm.box = "Centos-6.4"
     slave.vm.network "private_network", ip: "192.168.50.12"
     slave.vm.hostname = "slave.dev"
