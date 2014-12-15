@@ -6,4 +6,5 @@ It provides a 3 node MySQL replication cluster, where you can use the mysql-mast
 
 The base system is built on CentOS 6.4 and getting provisioned with puppet. 
 
-To set up the environment you have to see INSTALL.md
+To set up the environment you have to see INSTALL
+To check usage see USAGE
