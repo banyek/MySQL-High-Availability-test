@@ -30,6 +30,7 @@ class common {
     source => "puppet:///files/common/root/ssh/authorized_keys",
     owner => "root",
     group => "root",
+    mode => "0600",
     require => File['/root/.ssh']
  }
  file { "/root/.ssh/known_hosts":
@@ -41,7 +42,8 @@ class common {
  file { "/root/.ssh/config":
    source => "puppet:///files/common/root/ssh/config",
  	owner => "root",
-    group => "root",
+        group => "root",
+        mode => "0600",
  	require => File['/root/.ssh']
   } 
 }

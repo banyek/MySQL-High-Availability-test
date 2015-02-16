@@ -40,6 +40,6 @@ global
     timeout client 1m
     timeout server 1m
     mode tcp
-    option mysql-check user haproxy
+    option mysql-check user haproxy_master
     server Primary master1:3306 check 
     server Secondary master2:3306 check backup 
