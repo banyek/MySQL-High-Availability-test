@@ -10,8 +10,21 @@ function setupReplUser {
 	mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'manager'@'localhost' IDENTIFIED BY 'manager';"
 	mysql -e "GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'app'@'localhost' IDENTIFIED BY 'app';"
 	mysql -e "GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'app'@'%' IDENTIFIED BY 'app';"
-    mysql -e "GRANT USAGE ON *.* TO 'haproxy'@'%';"
 	mysql -e "FLUSH PRIVILEGES;"
+}
+
+function setupHaproxyMaster {
+        mysql -e "SET SQL_LOG_BIN=0; GRANT ALL ON *.* TO 'haproxy_master'@'%';"
+}
+
+function setupHaproxySlave {
+        HOST=$1
+        ssh root@$HOST "mysql -e \"SET SQL_LOG_BIN=0; GRANT ALL ON *.* TO 'haproxy_slave'@'%';\""
+}
+
+function dropAnonymous {
+        mysql -e "DELETE FROM mysql.user WHERE user='';"
+        mysql -e "FLUSH PRIVILEGES;"
 }
 
 function setupData {
@@ -38,3 +51,7 @@ setupRepl master2.dev
 cloneDatabaseTo slave.dev
 setupRepl slave.dev
 setupData
+setupHaproxyMaster
+setupHaproxySlave master2.dev
+setupHaproxySlave slave.dev
+dropAnonymous
