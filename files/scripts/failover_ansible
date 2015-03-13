@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ $# -ne 1 ];
+then
+   echo "Usage:"
+   echo "failover_ansible <master_server>"
+   exit 1
+fi
+
+if [[ $1 = 'master1' ]];
+then
+  ansible-playbook /root/failover.yml -e "old_master=master2 new_master=master1"
+elif [[ $1 = 'master2' ]];
+then
+  ansible-playbook /root/failover.yml -e "old_master=master1 new_master=master2"
+else
+  echo "Error: no such master server $1"
+fi

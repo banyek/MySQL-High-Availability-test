@@ -1,4 +1,4 @@
-class mhamanager {
+class slavestuff {
 
   package { "epel-release":
     provider  => rpm,
@@ -10,6 +10,13 @@ class mhamanager {
     owner     => "root",
     group     => "root",
     require   => Package["epel-release"]
+  } ->
+  package { "ansible":
+    ensure    => installed,
+  } ->
+  file { "/etc/ansible/hosts":
+    ensure => present,
+    source    => "puppet:///files/ansible/hosts"
   } ->
   package { "perl-Config-Tiny":
     ensure => installed,
@@ -47,26 +54,29 @@ class mhamanager {
   package { "haproxy":
     ensure => installed
   } ->
-  file { "/etc/haproxy/haproxy.cfg_master1":
-    source => "puppet:///files/haproxy/haproxy.cfg_master1"
-  } ->
-  file { "/etc/haproxy/haproxy.cfg_master2":
-    source => "puppet:///files/haproxy/haproxy.cfg_master2"
-  } 
-
   file { "/etc/haproxy/haproxy.cfg":
-    ensure  => link,
-    target  => "/etc/haproxy/haproxy.cfg_master1"
+    source => "puppet:///files/haproxy/haproxy.cfg"
   } ~>
   service { "haproxy":
     ensure => "running"
   } ->
-  file {"/root/switch.sh":
-    source => "puppet:///files/scripts/switch.sh",
+  file {"/root/failover_mha":
+    source => "puppet:///files/scripts/failover_mha",
     mode   => "0755",
   } ->
   file {"/root/master_ip_online_change":
     source => "puppet:///files/scripts/master_ip_online_change",
     mode   => "0755",
+  }
+  file {"/root/failover.yml":
+    source => "puppet:///files/scripts/failover.yml"
+  }
+  file { "/root/buildfromslave":
+    source => "puppet:///files/scripts/buildfromslave.sh",
+    mode   => "0755"
+  }
+  file { "/root/failover_ansible":
+    source => "puppet:///files/scripts/failover_ansible",
+    mode   => "0755"
   }
 }

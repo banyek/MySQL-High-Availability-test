@@ -23,10 +23,10 @@ Write: Success
 Failover
 --------
 
-There is a script, named switch.sh which can manage the database failover part. It takes one parameter, the host to switch. 
+There is two scripts, named failover_mha and failover_ansible which  manage the database failover part. They takes one parameter, the host to switch. 
 
 ```
-[vagrant@slave ~]$ sudo /root/switch.sh master2
+[vagrant@slave ~]$ sudo /root/failover_mha master2
 [...]
 It is better to execute FLUSH NO_WRITE_TO_BINLOG TABLES on the master before switching. Is it ok to execute on master1(192.168.50.10:3306)? (YES/no):yes
 [...]
@@ -44,12 +44,11 @@ Starting master switch from master1(192.168.50.10:3306) to master2(192.168.50.11
 [...]
 Mon Dec 15 11:49:20 2014 - [info]   /root/master_ip_online_change --command=stop --orig_master_host=master1 --orig_master_ip=192.168.50.10 --orig_master_port=3306 --orig_master_user='manager' --orig_master_password='manager' --new_master_host=master2 --new_master_ip=192.168.50.11 --new_master_port=3306 --new_master_user='manager' --new_master_password='manager' --orig_master_ssh_user=root --new_master_ssh_user=root   --orig_master_is_new_slave
 [...]
-Reloading haproxy:
 [vagrant@slave ~]$ 
 ```
 You can switch back with 
 ```
-[vagrant@slave ~]$ sudo /root/switch.sh master1
+[vagrant@slave ~]$ sudo /root/failover_mha master1
 ```
 
 During the failover part you can see that the database writes are stopped and resumed:

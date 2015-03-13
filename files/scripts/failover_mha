@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ $# -ne 1 ];
+then
+   echo "Usage:"
+   echo "failover_ansible <master_server>"
+   exit 1
+fi
+
+if [[ $1 = 'master1' ]];
+then
+  old_master=master2
+  new_master=master1
+elif [[ $1 = 'master2' ]];
+then
+  old_master=master1
+  new_master=master2
+else
+  echo "Error: no such master server $1"
+fi
+
+masterha_master_switch --conf=/root/mha.conf --master_state=alive --new_master_host=$new_master --orig_master_is_new_slave --interactive=0
+echo "set server mysql/$old_master weight 0" | socat /var/lib/haproxy/stats stdio
+echo "set server mysql/$new_master weight 1" | socat /var/lib/haproxy/stats stdio
+

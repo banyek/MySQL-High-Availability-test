@@ -3,7 +3,7 @@ node "slave.dev" {
   class { 'sql':
   	serverid => '3'
   }
-  include mhamanager
+  include slavestuff
   file { "/root/data.py":
     source => "puppet:///files/scripts/data.py",
     mode   => "0755"

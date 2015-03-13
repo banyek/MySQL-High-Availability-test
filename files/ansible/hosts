@@ -1,0 +1,10 @@
+# Ex 1: Ungrouped hosts, specify before any group headers.
+
+[masters]
+master1
+master2
+
+
+[slaves]
+
+slave

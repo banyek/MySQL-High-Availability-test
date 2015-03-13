@@ -1,0 +1,60 @@
+---
+- hosts: "{{ old_master }}"
+  gather_facts: False
+  user: root
+
+  tasks:
+
+    - name: Setting read only the old master
+      action: shell mysql -e "set global read_only=1;"
+
+- hosts: slave
+  gather_facts: False
+  user: root
+
+  tasks:
+
+    - name: Disabling {{ old_master }} in haproxy
+      action:  shell echo "set server mysql/{{ old_master }} weight 0" | socat /var/lib/haproxy/stats stdio
+
+- hosts: "{{ new_master }}"
+  gather_facts: False
+  user: root
+
+  tasks:
+
+    - name: Stopping slave
+      action: shell mysql -e "stop slave;"
+
+    - name: Resetting slave
+      action: shell mysql -e "reset slave all;"
+
+- hosts: "{{ old_master }}"
+  gather_facts: False
+  user: root
+
+  tasks:
+
+    - name: Setting up old master as slave of the new master
+      action: shell  mysql -e 'change master to master_host="{{ new_master }}", master_user="repl", master_password="repl", master_auto_position=1;'
+
+    - name: Starting up new slave
+      action: shell mysql -e "start slave;"
+
+- hosts: slave
+  gather_facts: False
+  user: root
+
+  tasks:
+
+    - name: Enabling {{ new_master }} in haproxy
+      action:  shell echo "set server mysql/{{ new_master }} weight 1" | socat /var/lib/haproxy/stats stdio
+
+- hosts: "{{ new_master }}"
+  gather_facts: False
+  user: root
+
+  tasks:
+
+    - name: Setting new master read-write
+      action: shell mysql -e "set global read_only=0;"
