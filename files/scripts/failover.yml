@@ -8,6 +8,14 @@
     - name: Setting read only the old master
       action: shell mysql -e "set global read_only=1;"
 
+    - name: Check read only
+      action: shell mysql --silent --silent -e "select @@read_only"
+      register: is_read_only
+
+    - assert:
+        that:
+          - "is_read_only.stdout == '1'"
+
 - hosts: slave
   gather_facts: False
   user: root
@@ -16,6 +24,14 @@
 
     - name: Disabling {{ old_master }} in haproxy
       action:  shell echo "set server mysql/{{ old_master }} weight 0" | socat /var/lib/haproxy/stats stdio
+
+    - name: Check HAProxy stopped
+      action: shell echo  "get weight mysql/master1" | socat /var/lib/haproxy/stats stdio | awk '{print $1}'
+      register: old_master_weight
+
+    - assert:
+        that:
+          - "old_master_weight.stdout == '0'"
 
 - hosts: "{{ new_master }}"
   gather_facts: False
@@ -28,6 +44,14 @@
 
     - name: Resetting slave
       action: shell mysql -e "reset slave all;"
+
+    - name: Check if slave is resetted
+      action: shell mysql -e "show slave status\G"
+      register: slave_status
+
+    - assert:
+        that:
+          - "slave_status.stdout == ''"
 
 - hosts: "{{ old_master }}"
   gather_facts: False
@@ -58,3 +82,11 @@
 
     - name: Setting new master read-write
       action: shell mysql -e "set global read_only=0;"
+
+    - name: Checking Read-Write
+      action: shell mysql --silent --silent -e "select @@read_only"
+      register: is_read_write
+
+    - assert:
+        that:
+          - "is_read_write.stdout == '0'"
