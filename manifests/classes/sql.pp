@@ -8,11 +8,11 @@ class sql ($serverid = '') {
   package { "Percona-Server-shared-56":
     ensure => present,
     require => Package['percona-release']
-  } -> 
+  } ->
   package { "Percona-Server-server-56":
     ensure  => present,
     require => Package['percona-release']
-  } -> 
+  } ->
   package { "Percona-Server-client-56":
     ensure  => present,
     require => Package['percona-release']
@@ -21,7 +21,7 @@ class sql ($serverid = '') {
     ensure  => present,
     require => Package['percona-release']
   } ->
-  package { "percona-xtrabackup":
+  package { "percona-xtrabackup-22":
     ensure  => present,
     require => Package['percona-release']
   } ->
@@ -30,16 +30,16 @@ class sql ($serverid = '') {
     ensure => present,
     content => template('sql/my.cnf.erb'),
     notify  => Service['mysql']
-  } -> 
+  } ->
 
   service { "mysql":
     ensure  => "running",
     require => Package['Percona-Server-server-56']
-  } -> 
+  } ->
   file { "/tmp/mha4mysql-node-0.56-0.el6.noarch.rpm":
     ensure => present,
     source => 'puppet:///files/packages/mha4mysql-node-0.56-0.el6.noarch.rpm',
-  } -> 
+  } ->
   package { "mha4mysql-node":
     ensure   => 'installed',
     provider => rpm,
